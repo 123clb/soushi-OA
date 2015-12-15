@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.kaoshidian.oa.log.entity">
+    <class name="BizLog" table="oa_log_bizlog">
+        <id name="logId" type="java.lang.Integer" column="logId">
+            <generator class="identity"></generator>
+        </id>
+        
+        <property name="userId" column="userId" type="java.lang.Integer"></property>
+        <property name="userName" column="userName" length="20" type="string"></property>
+        <property name="remoteIp" column="remoteIp" type="string"></property>
+        <property name="entityId" column="entityId" type="java.lang.Integer"></property>
+        <property name="description" column="description" type="string"></property>
+        <property name="createDate" column="createDate" type="java.util.Date"></property>
+        <property name="entity" column="entity" length="20">
+            <type name="org.hibernate.type.EnumType">
+                <param name="enumClass">com.kaoshidian.oa.util.LogEntityEnum</param>
+                <param name="type">12</param>
+            </type>
+        </property>
+        <property name="operation" column="operation" length="20">
+            <type name="org.hibernate.type.EnumType">
+                <param name="enumClass">com.kaoshidian.oa.util.LogOperationEnum</param>
+                <param name="type">12</param>
+            </type>
+        </property>
+        <property name="status" column="status" length="20">
+            <type name="org.hibernate.type.EnumType">
+                <param name="enumClass">com.kaoshidian.oa.util.LogStatusEnum</param>
+                <param name="type">12</param>
+            </type>
+        </property>
+        
+    </class>
+</hibernate-mapping>

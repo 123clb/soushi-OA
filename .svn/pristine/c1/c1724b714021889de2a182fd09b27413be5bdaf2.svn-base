@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.kaoshidian.oa.permission.entity">
+    <class name="Menu" table="oa_perm_menu">
+        <id name="menuId" column="menuId" type="java.lang.Integer">
+            <generator class="identity"></generator>
+        </id>
+        <property name="menuName" type="string" column="menuName"></property>
+        <property name="menuPath" type="string" column="menuPath"></property>
+        <property name="menuSeq" type="int" column="menuSeq"></property>
+        <property name="parentMenuId" type="java.lang.Integer" column="parentMenuId"></property>
+        <property name="createDate" type="java.util.Date" column="createDate"></property>
+        <property name="description" type="string" column="description"></property>
+    </class>
+</hibernate-mapping>

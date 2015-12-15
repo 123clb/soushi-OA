@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.kaoshidian.oa.attend.entity">
+    <class name="AttendAgainSign"  table="oa_attend_againsign">
+        <id column="againId" type="java.lang.Integer" name="againId">
+            <generator class="identity"></generator>
+        </id>
+        <property name="againName"      type="string"  column="againName"></property>        
+        <property name="againLoginName"    type="string"  column="againLoginName"></property>        
+    	<property name="againTime" 		type="java.util.Date"  column="againTime"></property>
+    	<property name="chargeLoginName"   type="string"  column="chargeLoginName"></property>  
+    	<property name="isCheck"     	type="java.lang.Boolean"  column="isCheck"></property>
+    	<property name="description"    type="string"  column="description"></property>
+    	<property name="createDate" 	type="java.util.Date"  column="createDate"></property>  	
+    </class>
+</hibernate-mapping>

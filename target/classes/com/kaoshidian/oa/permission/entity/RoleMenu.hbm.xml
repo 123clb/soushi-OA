@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.kaoshidian.oa.permission.entity">
+    <class name="RoleMenu" table="oa_perm_rolemenu">
+        <id name="roleMenuId" type="java.lang.Integer">
+            <column name="role_menu_id" />
+            <generator class="identity" />
+        </id>
+        <property name="roleId" type="java.lang.Integer">
+            <column name="roleId" not-null="true">
+                <comment>角色id</comment>
+            </column>
+        </property>
+        <property name="menuId" type="java.lang.Integer">
+            <column name="menuId" not-null="true">
+                <comment>菜单id</comment>
+            </column>
+        </property>
+        <property name="description" type="java.lang.String">
+            <column name="description" length="128">
+                <comment>描述</comment>
+            </column>
+        </property>
+    </class>
+</hibernate-mapping>

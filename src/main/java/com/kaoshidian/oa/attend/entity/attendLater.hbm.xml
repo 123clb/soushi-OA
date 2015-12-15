@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.kaoshidian.oa.attend.entity">
+    <class name="AttendLater" table="oa_attend_later">
+        <id column="attendlaterId" type="java.lang.Integer" name="attendlaterId">
+            <generator class="identity"></generator>
+        </id>
+    <property name="userId"       type="java.lang.Integer"  column="userId"></property>       
+    <property name="laterDate" type="java.util.Date"  column="laterDate"></property>
+   </class>
+</hibernate-mapping>

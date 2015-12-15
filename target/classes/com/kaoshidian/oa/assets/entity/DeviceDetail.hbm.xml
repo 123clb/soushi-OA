@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.kaoshidian.oa.assets.entity">
+    <class name="DeviceDetail" table="oa_assets_devicedetail">
+        <id column="detailId" type="java.lang.Integer" name="detailId">
+            <generator class="identity"></generator>
+        </id>
+        <property name="deviceId"        type="java.lang.Integer"  column="deviceId"></property>
+        <property name="usePersonId"     type="java.lang.Integer"  column="usePersonId"></property>
+        <property name="assignPersonId"  type="java.lang.Integer"  column="assignPersonId"></property>
+        <property name="usePersonName"   type="string"   column="usePersonName"></property>
+         <property name="createDate" type="java.util.Date" column="createDate"></property>
+        <property name="description" type="text" column="description"></property>
+    </class>
+</hibernate-mapping>

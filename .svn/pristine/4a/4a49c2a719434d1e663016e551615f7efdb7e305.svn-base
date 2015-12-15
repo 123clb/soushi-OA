@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.kaoshidian.oa.attend.entity">
+    <class name="AttendForLeave"   table="oa_attend_forleave">
+        <id column="leaveId" type="java.lang.Integer" name="leaveId">
+            <generator class="identity"></generator>
+        </id>
+       <property name="applyId"    type="java.lang.Integer"  column="applyId"></property>       
+       <property name="applyName" type="string"  column="applyName"></property>
+       <property name="leaveStartTime"  type="java.util.Date"  column="leaveStartTime"></property>
+       <property name="leaveEndTime"  type="java.util.Date"  column="leaveEndTime"></property>
+       <property name="attendLeaveEnum"  column="attendLeaveEnum">
+          <type name="org.hibernate.type.EnumType">
+                <param name="enumClass">com.kaoshidian.oa.util.AttendLeaveEnum</param>
+                <param name="type">12</param>
+          </type>  
+       </property>
+       <property name="leaveNum"      type="java.lang.Double"  column="leaveNum"></property>
+       <property name="isAgree"       type="java.lang.Boolean"  column="isAgree"></property>
+       <property name="isVerify"      type="java.lang.Boolean"  column="isVerify"></property>
+       <property name="isApproval"    type="java.lang.Boolean"  column="isApproval"></property>
+       <property name="chargeId"      type="java.lang.Integer"  column="chargeId"></property> 
+       <property name="description"   type="string"  column="description"></property> 
+       <property name="createDate"    type="java.util.Date"  column="createDate"></property>
+       <property name="closeTime"    type="java.util.Date"  column="closeTime"></property>
+       <property name="rtxNum"       type="string"  column="rtxNum"></property>
+       
+       
+    </class>   	
+</hibernate-mapping>

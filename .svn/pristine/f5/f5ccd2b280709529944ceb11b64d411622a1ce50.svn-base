@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx" 
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+	http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd" default-lazy-init="true">
+	<description>Shiro Configuration</description>	
+	<!-- Shiro's main business-tier object for web-enabled applications -->
+	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+		<property name="realm" ref="shiroLdapRealm" />
+		<property name="cacheManager" ref="cacheManager" />
+		<property name="sessionManager" ref="sessionManager"/>
+	</bean>
+
+	<!-- 項目自定义Realm -->
+	<bean id="shiroDbRealm" class="com.kaoshidian.oa.permission.ShiroDbRealm">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+	
+	<!-- 自定义Ldap Realm -->
+	<bean id="shiroLdapRealm" class="com.kaoshidian.oa.permission.ShiroLdapRealm">
+	   <property name="baseDn" value="OU=搜视网络,DC=isoushi,DC=cn"/>
+	   <property name="contextFactory.url" value="ldap://192.168.1.239:389"/>
+	   <property name="contextFactory.systemUsername" value="CN=administrator,DC=isoushi,DC=cn"/>
+	   <property name="contextFactory.systemPassword" value="123qwe!@#"/>
+	</bean>
+	
+	<!-- Shiro Filter -->
+	<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+		<property name="securityManager" ref="securityManager" />
+		<property name="loginUrl" value="/login" />
+		<property name="successUrl" value="/" />
+		<property name="unauthorizedUrl" value="/welcome" />
+		<property name="filters">
+		  <util:map>
+		      <entry key="mrmsAuthFilter" value-ref="mrmsAuthFilter"></entry>
+		      <entry key="permAuthFilter" value-ref="permAuthFilter"></entry>
+		  </util:map>
+		</property>
+		<property name="filterChainDefinitions">
+		    <value>
+		     /favicon.ico = anon
+		     /resources/** = anon 
+		     /station/** = anon 
+		     <!--/file/submit.do = anon 
+		     /upload.do = anon
+		     /api/** = anon
+		     /file/pfdelete.do** = mrmsAuthFilter[ProductCharge,ProductManager]
+		     /file/recoverDelete.do** = mrmsAuthFilter[ProductCharge,ProductManager]
+		     /flie/pfmodify.do** = mrmsAuthFilter[ProductCharge,ProductManager,ProductEditor]
+		     /flie/save.do** = mrmsAuthFilter[ProductCharge,ProductManager,ProductEditor]
+		     /file/deleteFile.do** = mrmsAuthFilter[admin]
+		     /file/reconvert.do** = mrmsAuthFilter[admin]
+		     /file/checked.do** = mrmsAuthFilter[ProductCharge,ProductManager,ProductEditor]
+		     /catalog/delete.do** = mrmsAuthFilter[ProductCharge,ProductManager]
+		     /catalog/save.do** = mrmsAuthFilter[ProductCharge,ProductManager,ProductEditor]
+		     /catalog/before/save.do** = mrmsAuthFilter[ProductCharge,ProductManager,ProductEditor]
+		     /catalog/before/modify.do** = mrmsAuthFilter[ProductCharge,ProductManager,ProductEditor]
+		     /convert/arg/before/add.do** == mrmsAuthFilter[admin]
+		     /convert/arg/before/modify.do** == mrmsAuthFilter[admin]
+		     /convert/arg/save.do** == mrmsAuthFilter[admin]
+		     /convert/arg/delete.do** == mrmsAuthFilter[admin]
+		     /job/beforeMove.do** == mrmsAuthFilter[admin]
+		     /job/move.do** == mrmsAuthFilter[admin]
+		     /job/beforeReconvert.do** == mrmsAuthFilter[admin]
+		     /job/reconverter.do** == mrmsAuthFilter[admin]
+		     /job/beforeIssue2yl.do** == mrmsAuthFilter[admin]
+		     /job/issue2yl.do** == mrmsAuthFilter[admin]
+		     /job/delete.do** == mrmsAuthFilter[admin]
+		     /job/dbtojoblog.do** == mrmsAuthFilter[admin]
+		     /job/priority.do** == authc
+		     /job/search.do** == authc
+		     /job/list.do** == authc
+		     /job/** = anon
+		     /station/start.do** == mrmsAuthFilter[admin]
+		     /station/beforePause.do** == mrmsAuthFilter[admin]
+		     /station/pause.do** == mrmsAuthFilter[admin]-->
+		     /** = authc 
+		     <!--authc -->
+		    </value>
+		</property>
+	</bean>
+
+    <bean id="mrmsAuthFilter" class="com.kaoshidian.oa.permission.MrmsAuthenticationFilter">
+        <property name="unauthorizedUrl" value="/welcome"></property>
+    </bean>
+    <bean id="permAuthFilter" class="com.kaoshidian.oa.permission.PermissionAuthFilter"></bean>
+
+	<bean id="cacheManager" class="org.apache.shiro.cache.MemoryConstrainedCacheManager" />
+	<bean id="sessionManager" class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager" >
+		<!-- # 1,800,000 milliseconds = 30 minutes -->
+		<property name="globalSessionTimeout" value="1800000"/>
+	</bean>
+
+	<bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor" />
+	
+</beans>

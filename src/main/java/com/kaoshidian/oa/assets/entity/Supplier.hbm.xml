@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.kaoshidian.oa.assets.entity">
+    <class name="Supplier" table="oa_assets_supplier">
+        <id column="supplierId" type="java.lang.Integer" name="supplierId">
+            <generator class="identity"></generator>
+        </id>
+        <property name="supplierName"    type="string"  column="supplierName"></property>
+        <property name="supplierPhone"   type="string"  column="supplierPhone"></property>
+        <property name="supplierAddress" type="string"  column="supplierAddress"></property>
+    	<property name="createDate" type="java.util.Date"  column="createDate"></property>
+        <property name="description" type="string"  column="description"></property> 
+    </class>
+</hibernate-mapping>

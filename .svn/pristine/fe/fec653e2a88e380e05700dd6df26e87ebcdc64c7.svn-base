@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.kaoshidian.oa.permission.entity">
+    <class name="User" table="oa_perm_user">
+        <id column="userId" type="java.lang.Integer" name="userId">
+            <generator class="identity"></generator>
+        </id>      
+        <property name="loginName" type="string" column="loginName" length="20"></property>
+        <property name="password" type="string" column="password"></property>
+        <property name="realName" type="string" column="realName" length="20"></property>
+        <property name="salt" type="string" column="salt" length="10"></property>
+        <property name="createDate" type="java.util.Date" column="createDate"></property>
+        <property name="lastModifyPwdTime" type="java.lang.Long" column="lastModifyPwdTime"></property>
+        <property name="state" column="state" length="10">
+            <type name="org.hibernate.type.EnumType">
+                <param name="enumClass">com.kaoshidian.oa.permission.entity.UserStateEnum</param>
+                <param name="type">12</param>
+            </type>
+        </property>
+        <property name="userType" column="userType" length="10">
+            <type name="org.hibernate.type.EnumType">
+                <param name="enumClass">com.kaoshidian.oa.permission.entity.UserTypeEnum</param>
+                <param name="type">12</param>
+            </type>
+        </property>
+        <property name="description" type="string" column="description"></property>
+        <property name="orgId" type="java.lang.Integer" column="orgId"></property>
+        <property name="dn" type="string" column="dn"></property>
+        <property name="jobno" type="string" column="jobno"></property>
+        <property name="isSend" type="java.lang.Boolean" column="isSend"></property>
+    </class>    
+</hibernate-mapping>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.kaoshidian.oa.attend.entity">
+    <class name="AttendRules"  table="oa_attend_rules">
+        <id column="ruleId" type="java.lang.Integer" name="ruleId">
+            <generator class="identity"></generator>
+        </id>
+        <property name="ruleName"    type="string"  column="ruleName"></property>
+        <property name="morningTime"  type="string"  column="morningTime"></property>
+    	<property name="afterTime"     type="string"   column="afterTime"></property>
+    	<property name="addUser"       type="string"   column="adduser"></property>
+    	<property name="description"    type="string"  column="description"></property>
+    	<property name="createDate" 	type="java.util.Date"  column="createDate"></property>  
+    </class>
+</hibernate-mapping>

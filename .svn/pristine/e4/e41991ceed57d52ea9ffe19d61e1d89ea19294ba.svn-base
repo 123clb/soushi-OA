@@ -1,0 +1,36 @@
+/**
+ * 
+ */
+package com.kaoshidian.oa;
+
+import static org.junit.Assert.*;
+
+import java.util.List;
+
+import org.junit.Test;
+
+import com.kaoshidian.oa.permission.SyncFromLdapTask;
+import com.kaoshidian.tool.ldap.LdapOrg;
+
+/**
+ * @author <p>Turbidsoul Chen 于 2013年7月1日 上午10:59:38</p>
+ *
+ */
+public class SyncLdapTaskTest extends JUnitBase {
+
+	@Test
+	public void testSyncOrg() throws Exception {
+		SyncFromLdapTask task = context.getBean(SyncFromLdapTask.class);
+		assertEquals(task.getLdap().getHost(), "192.168.1.239");
+		assertEquals(task.getLdap().getPort(), 389);
+		assertEquals(task.getLdap().getBaseDn(), "OU=搜视网络,DC=isoushi,DC=cn");
+		assertEquals(task.getLdap().getUserName(), "administrator");
+		assertEquals(task.getLdap().getPassword(), "456asd$%^");
+		
+		
+		//assertTrue(task.getLdap().auth("css", "123456"));
+		
+		task.syncUser();
+	}
+
+}

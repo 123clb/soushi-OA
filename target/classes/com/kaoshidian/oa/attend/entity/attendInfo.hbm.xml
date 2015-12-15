@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.kaoshidian.oa.attend.entity">
+    <class name="AttendInfo" table="oa_attend_info">
+     <id column="infoId" type="java.lang.Integer" name="infoId">
+            <generator class="identity"></generator>
+    </id>
+    <property name="rtxNo" type="string"  column="rtxNo"></property>     
+    <property name="personName" type="string"  column="personName"></property>
+    <property name="yearNum"    type="java.lang.Integer"  column="yearNum"></property>
+    <property name="monthNum"  type="java.lang.Integer"   column="monthNum"></property>   
+    <property name="infoTime"  type="string"              column="infoTime"></property>
+    <property name="laterNum"  type="java.lang.Integer"   column="laterNum"></property> 
+    <property name="leaveNum"  type="java.lang.Double"    column="leaveNum"></property>   
+   </class>
+</hibernate-mapping>

@@ -1,0 +1,388 @@
+/**
+ * 
+ */
+package com.kaoshidian.oa.permission.mgr;
+
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+import org.apache.commons.dbutils.handlers.BeanListHandler;
+import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.shiro.util.CollectionUtils;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import com.kaoshidian.oa.api.SerureUtil;
+import com.kaoshidian.oa.attend.dao.AttendRulesDao;
+import com.kaoshidian.oa.attend.entity.AttendRules;
+import com.kaoshidian.oa.base.EntityView;
+import com.kaoshidian.oa.base.KsdRowProcessor;
+import com.kaoshidian.oa.base.exception.KsdBizException;
+import com.kaoshidian.oa.permission.dao.MenuDAO;
+import com.kaoshidian.oa.permission.dao.RoleDAO;
+import com.kaoshidian.oa.permission.dao.RoleMenuDao;
+import com.kaoshidian.oa.permission.dao.UserDAO;
+import com.kaoshidian.oa.permission.dao.UserRoleDao;
+import com.kaoshidian.oa.permission.entity.Menu;
+import com.kaoshidian.oa.permission.entity.Role;
+import com.kaoshidian.oa.permission.entity.RoleMenu;
+import com.kaoshidian.oa.permission.entity.User;
+import com.kaoshidian.oa.permission.entity.UserRole;
+import com.kaoshidian.oa.permission.entity.UserStateEnum;
+import com.kaoshidian.oa.permission.entity.UserTypeEnum;
+/**
+ * @author <p>
+ *         Innate Solitary 于 2012-5-22 上午10:49:44
+ *         </p>
+ * 
+ */
+@Service
+@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)
+public class PermissionMgr {
+
+	// [start] Dao's instance
+	@Autowired
+	private MenuDAO menuDao;
+
+	@Autowired
+	private RoleDAO roleDao;
+
+	@Autowired
+	private RoleMenuDao roleMenuDao;
+
+	@Autowired
+	private UserRoleDao userRoleDao;
+	
+	@Autowired
+	private UserDAO userDao;
+	
+	@Autowired 
+	private AttendRulesDao attendRulesDao;
+	
+	// [end]
+
+	public List<Menu> getMainMenuList() {
+		EntityView ev = new EntityView();
+		ev.add(Restrictions.isNull("parentMenuId"));
+		ev.addOrder(Order.asc("menuSeq"));
+		return menuDao.findByEntityView(ev);
+	}
+
+	public Menu getMenuById(Integer menuId) {
+		return menuDao.findById(menuId);
+	}
+
+	@SuppressWarnings("unchecked")
+    public List<Menu> findMenuByParentId(Integer parentId, User user) {
+		StringBuffer sql = new StringBuffer("SELECT DISTINCT m.menuId, m.menuName, m.menuPath, m.menuSeq, m.createDate, m.parentMenuId, m.description " +
+				"FROM oa_perm_menu m, oa_perm_userrole ur, oa_perm_rolemenu rm " +
+				"WHERE m.menuId = rm.menuId AND rm.roleId = ur.roleId AND ur.userId=? AND ");
+		List<Object> params = new ArrayList<Object>();
+		params.add(user.getUserId());
+		if(parentId == null || parentId.intValue() == 0) {
+			sql.append("m.parentMenuId IS NULL");
+		} else {
+			sql.append("m.parentMenuId=?");
+			params.add(parentId);
+		}
+		
+		sql.append(" ORDER BY m.menuSeq asc");
+		
+		return (List<Menu>) menuDao.findBySql(sql.toString(), params.toArray(), new BeanListHandler<Menu>(Menu.class, new KsdRowProcessor()));
+	}
+	
+	
+	public List<Menu> findMenuByParentId(Integer parentId) {
+		EntityView ev = new EntityView();
+		if(parentId == null || parentId.intValue() == 0) {
+			ev.add(Restrictions.isNull("parentMenuId"));
+		} else {
+			ev.add(Restrictions.eq("parentMenuId", parentId));
+		}
+		ev.addOrder(Order.asc("menuSeq"));
+		return menuDao.findByEntityView(ev);
+	}
+
+	public JSONArray createMenuTreeJSON(Integer nodeId) {
+
+		JSONObject rootjson = new JSONObject();
+		rootjson.element("id", "0");
+		rootjson.element("hasChildren", false);
+		rootjson.element("classes", "folder");
+		rootjson.element("expanded", true);
+		rootjson.element("text", "<a href='perm/menu/list.do?menuId=0' target='ajax' rel='menulistbox'>菜单管理</a>");
+		JSONObject _paramjson = new JSONObject();
+		_paramjson.element("root", 0);
+		_paramjson.element("nodeId", 0);
+		rootjson.element("param", _paramjson);
+
+		JSONArray nodearrayjson = new JSONArray();
+
+		EntityView ev = new EntityView();
+		if (nodeId == null || nodeId.intValue() == 0) {
+			ev.add(Restrictions.isNull("parentMenuId"));
+		} else {
+			ev.add(Restrictions.eq("parentMenuId", nodeId));
+		}
+		ev.addOrder(Order.asc("menuSeq"));
+
+		List<Menu> menuList = menuDao.findByEntityView(ev);
+		for (Menu menu : menuList) {
+			JSONObject nodejson = new JSONObject();
+			nodejson.element("id", menu.getMenuId().toString());
+			boolean isHasSub = this.isHasSubMenu(menu.getMenuId());
+			nodejson.element("hasChildren", true);
+			nodejson.element("classes", isHasSub ? "folder" : "file");
+			JSONObject paramjson = new JSONObject();
+			paramjson.element("root", menu.getMenuId().toString());
+			paramjson.element("nodeId", menu.getMenuId().toString());
+			nodejson.element("param", paramjson);
+			String text = "<a href='perm/menu/list.do?menuId=" + menu.getMenuId() + "' target='ajax' rel='menulistbox'>" + menu.getMenuName()
+			        + "</a>";
+			nodejson.element("text", text);
+			nodearrayjson.add(nodejson);
+
+		}
+
+		if (nodeId != null) {
+			return nodearrayjson;
+		}
+
+		rootjson.element("children", nodearrayjson);
+		JSONArray treejson = new JSONArray();
+		treejson.add(rootjson);
+		return treejson;
+	}
+
+	public List<Menu> getMenuTree(Integer nodeId, User user) {
+
+		
+		List<Menu> menuList = null;
+		if(user == null) {
+			menuList = this.findMenuByParentId(nodeId);
+		} else {
+			menuList = this.findMenuByParentId(nodeId, user);
+		}
+		
+        for (Menu menu : menuList) {
+	        menu.setSubMenu(getMenuTree(menu.getMenuId(), user));
+        }
+		return menuList;
+	}
+
+	private boolean isHasSubMenu(Integer menuId) {
+		EntityView ev = new EntityView();
+		ev.add(Restrictions.eq("parentMenuId", menuId));
+		return menuDao.count(ev) > 0;
+	}
+
+	public List<Integer> getMenuIdsByRoleId(Integer roleId) {
+		String sql = "select m.menuId from oa_perm_menu m where m.menuId in (select rm.menuId from  oa_perm_rolemenu rm where rm.roleId = ?)";
+		List<Map> map = roleDao.findBySql(sql, new Object[] { roleId });
+		List<Integer> menuIdList = new ArrayList<Integer>(map.size());
+		for (Map m : map) {
+			menuIdList.add((Integer) m.get("menuId"));
+		}
+		return menuIdList;
+	}
+	
+	/**
+	 * 通过角色名称得到有此角色的所有用户
+	 * @param roleName
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+    public List<User> getUserByRoleName(String roleName) {
+		String sql = "SELECT u.* FROM oa_perm_user u, oa_perm_userrole ur, oa_perm_role r WHERE u.userId = ur.userId AND ur.roleId = r.roleId AND r.roleName=?";
+		return (List<User>) userDao.findBySql(sql.toString(), new Object[] {roleName}, new BeanListHandler<User>(User.class, new KsdRowProcessor()));
+	}
+
+	/**
+	 * @param roleId
+	 * @param menuIds
+	 * @return 授权失败的menuId
+	 */
+	public Integer[] roleGrant(Integer roleId, Integer[] menuIds) {
+
+		EntityView ev = new EntityView();
+		ev.add(Restrictions.eq("roleId", roleId));
+		roleMenuDao.delete(ev);
+
+		List<Integer> failList = new ArrayList<Integer>();
+		if (menuIds != null) {
+	        for (Integer menuId : menuIds) {
+		        boolean result = roleMenuDao.saveOrUpdate(new RoleMenu(null, roleId, menuId));
+		        if (!result) {
+			        failList.add(menuId);
+		        }
+	        }
+        }
+		return failList.toArray(new Integer[failList.size()]);
+	}
+
+	public boolean saveOrUpdateUser(User user, Integer[] roleIds) {
+		
+		if(user.getUserId() == null && StringUtils.isEmpty(user.getPassword())) {
+			return false;
+		}
+		
+		if (user.getUserId() == null) {
+	        user.setState(UserStateEnum.ACTIVITY);
+	        
+	        User oldUser = userDao.findUniq("loginName", user.getLoginName());
+	        if(oldUser != null) {
+	        	return false;
+	        }
+        }
+		
+		if (user.getUserId() != null) {
+			EntityView ev = new EntityView();
+			ev.add(Restrictions.eq("userId", user.getUserId()));
+			userRoleDao.delete(ev);
+		}
+		
+		String salt;
+		if (user.getUserType() == UserTypeEnum.WORKER && !StringUtils.isEmpty(user.getPassword().trim())) {
+			salt = RandomStringUtils.randomAscii(5);
+			user.setSalt(salt);
+			try {
+				String pw = SerureUtil.md5ValueForHex(user.getPassword() + salt);
+				user.setPassword(pw);
+			} catch (NoSuchAlgorithmException e) {
+				throw new KsdBizException(e);
+			}
+		}
+		
+		if(user.getUserId() != null && StringUtils.isEmpty(user.getPassword().trim())) {
+			List<Map> usermaplist = userDao.findBySql("select password, salt from oa_perm_user where userId=?", new Object[] {user.getUserId()});
+			Map<String, String> usermap = null;
+			if(usermaplist.size() > 0) {
+				usermap = usermaplist.get(0);
+			}
+			user.setPassword(usermap.get("password"));
+			user.setSalt(usermap.get("salt"));
+		} else {
+			user.setLastModifyPwdTime(System.currentTimeMillis());
+		}
+		
+		if (user.getUserId() == null) {
+			userDao.saveOrUpdate(user);
+		} else {
+			userDao.update(user);
+		}
+		if (roleIds != null) {
+	        for (Integer roleId : roleIds) {
+		        UserRole userRole = new UserRole();
+		        userRole.setUserId(user.getUserId());
+		        userRole.setRoleId(roleId);
+		        userRoleDao.saveOrUpdate(userRole);
+	        }
+        }
+		
+		return true;
+		
+	}
+	
+	public void deleteUser(Integer userId) {
+		EntityView ev = new EntityView();
+		ev.add(Restrictions.eq("userId", userId));
+		userRoleDao.delete(ev);
+		userDao.delete(new Integer[] {userId});
+	}
+	
+	public List<Integer> getRoleIdsByGrantUser(Integer userId) {
+		List<UserRole> userRoleList = userRoleDao.findByProperty("userId", userId);
+		List<Integer> roleIdList = new ArrayList<Integer>(userRoleList.size());
+		
+		for (UserRole userRole : userRoleList) {
+	        roleIdList.add(userRole.getRoleId());
+        }
+		return roleIdList;
+	}
+	
+	public List<Role> getRolesByGrantUser(Integer userId) {
+		List<Integer> roleIdList = this.getRoleIdsByGrantUser(userId);
+		if(CollectionUtils.isEmpty(roleIdList)) {
+			return new ArrayList<Role>(0);
+		}
+		EntityView ev = new EntityView();
+		ev.add(Restrictions.in("roleId", roleIdList));
+		return roleDao.findByEntityView(ev);
+	}
+	
+	
+	//获取不同权限的map
+	public Map<String,String> getUserMap(String rolename)
+	{
+		EntityView ev=new EntityView();
+		ev.add(Restrictions.eq("roleName", rolename));	
+		Role role=roleDao.findUniq(ev);
+		List <UserRole> urList=(List<UserRole>) userRoleDao.findByProperty("roleId", role.getRoleId());		
+		List<User>uList=new ArrayList<User>();
+		EntityView ev1=new EntityView();
+		ev1.add(Restrictions.eq("state", UserStateEnum.ACTIVITY));
+		uList=userDao.findByEntityView(ev1);
+		Map<String,String> userMap = new LinkedHashMap<String,String>();
+		for (int i = 0; i < urList.size(); i++) {
+			 
+			for (int j = 0; j < uList.size(); j++) {
+				
+				if (urList.get(i).getUserId().equals(uList.get(j).getUserId())) {
+					userMap.put(urList.get(i).getUserId().toString(),uList.get(j).getRealName());	
+				}
+			}		
+		}
+		return userMap;
+	}
+	
+	//返回指定角色的监管人RTX loginName
+	public  Map<String,String> getUserNameMap(String rolename)
+	{
+		  EntityView ev=new EntityView();
+		  ev.add(Restrictions.eq("roleName", rolename));	
+		  Role role =roleDao.findUniq(ev);			
+	      List <UserRole> urList=(List<UserRole>) userRoleDao.findByProperty("roleId", role.getRoleId());
+		  Map<String,String> userMap = new LinkedHashMap<String,String>();
+		  for (int i = 0; i < urList.size(); i++) { 
+			    User user=userDao.findById(urList.get(i).getUserId());
+			    if(user!=null)
+			    {
+			    	userMap.put(user.getLoginName(),user.getRealName());	
+			    }
+		 }
+		return userMap;
+	}
+		
+	//返回指定角色的监管人user
+	public User getUser(String rolename)
+	{     
+		  EntityView ev=new EntityView();
+		  ev.add(Restrictions.eq("roleName", rolename));	
+		  Role role =roleDao.findUniq(ev); 
+		  EntityView ev1=new EntityView();
+		  ev.add(Restrictions.eq("roleId", role.getRoleId()));	
+		  UserRole userRole=userRoleDao.findUniq(ev1);
+	      User user=userDao.findById(userRole.getUserId());
+		  return user;
+	}
+	
+	//返回考勤时间map
+	public Map<String, String>  getRuleMap() {
+		List<AttendRules> ruleList=attendRulesDao.findAll();	
+		Map<String, String> ruleMap=new LinkedHashMap<String,String>();
+		for (int i = 0; i < ruleList.size(); i++) {			
+			ruleMap.put(ruleList.get(i).getRuleId().toString(), ruleList.get(i).getRuleName());
+		}		
+		return  ruleMap;
+	}
+	
+}

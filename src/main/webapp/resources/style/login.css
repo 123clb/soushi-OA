@@ -1,0 +1,13 @@
+/* CSS Document */
+*{margin:0;padding:0;}
+.lt{float:left;}
+.rt{float:right;}
+.login_bg{width:100%; height:500px; background:url(../img/login_bg.jpg) repeat-x left top; padding-top:120px;}
+.login_box{margin:0px auto 0 auto;width:987px; height:290px; background:url(../img/login_bg03.png) no-repeat left top;padding-top:107px;}
+.login_box ul{width:317px; height:auto; border-top:solid 1px #fff; margin-left:342px;}
+.login_box ul li{width:317px; height:32px; list-style:none; color:#000; margin-top:26px;}
+.login_box ul li label{width:78px; height:32px; text-align:right;line-height:32px; font-size:14px; display:block;}
+.login_box ul li span{width:auto;}
+.login_box ul li .input01{width:200px; height:30px; line-height:30px; border:solid 1px #a1a3a4;border-radius:5px; font-size:14px;-moz-box-shadow:2px 2px 2px #999 inset;-webkit-box-shadow:2px 2px 2px #999 inset;box-shadow:2px 2px 2px #999 inset; text-indent:10px;}  
+.login_box ul li .btu_bg{width:88px; height:32px; text-align:center; line-height:32px; font-weight:bold; font-size:14px;border:none; background:url(../img/btu_bg.png) no-repeat left top; color:#fff; cursor:pointer;}  
+.mar_r10{margin-right:10px;}           

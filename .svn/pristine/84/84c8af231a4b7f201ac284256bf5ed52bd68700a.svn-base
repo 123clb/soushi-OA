@@ -1,0 +1,37 @@
+package com.kaoshidian.oa.util;
+
+import com.kaoshidian.oa.assets.entity.Device;
+import com.kaoshidian.oa.assets.entity.DeviceCategory;
+import com.kaoshidian.oa.assets.entity.DeviceDetail;
+import com.kaoshidian.oa.assets.entity.Supplier;
+import com.kaoshidian.oa.attend.entity.AttendAgainSign;
+import com.kaoshidian.oa.attend.entity.AttendForLeave;
+import com.kaoshidian.oa.permission.entity.Menu;
+import com.kaoshidian.oa.permission.entity.Role;
+import com.kaoshidian.oa.permission.entity.User;
+
+public enum LogEntityEnum {
+	MENU("菜单管理", Menu.class),
+	ROLE("角色管理", Role.class),
+	USER("用户管理", User.class),
+	DEVICE_CATEGORY("设备类别",DeviceCategory.class),
+	DEVICE("设备信息",Device.class),
+	DEVICE_SUPPLIER("供应商",Supplier.class),
+	DEVICE_DETAIL("设备分配明细",DeviceDetail.class),
+	ATTEND_LEAVE("请假",AttendForLeave.class),
+	ATTEND_AGAINSIGN("补签",AttendAgainSign.class);
+	
+	private String label;
+	private Class<?> entityClass;
+	private LogEntityEnum(String label, Class<?> entityClass) {
+		this.label = label;
+		this.entityClass = entityClass;
+	}
+	public String getLabel() {
+    	return label;
+    }
+	public Class<?> getEntityClass() {
+    	return entityClass;
+    }
+		
+}

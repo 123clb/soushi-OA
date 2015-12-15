@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.kaoshidian.oa.assets.entity">
+    <class name="Device" table="oa_assets_device">
+        <id column="deviceId" type="java.lang.Integer" name="deviceId">
+            <generator class="identity"></generator>
+        </id>
+        <property name="deviceName" type="string" column="deviceName"></property>
+        <property name="categoryId" type="java.lang.Integer"  column="categoryId"></property>
+        <property name="brand" type="string" column="brand"></property>
+        <property name="dNumber" type="string" column="dNumber"></property>
+        <property name="sNumber" type="string" column="sNumber"></property> 
+        <property name="usePersonName" type="string" column="usePersonName"></property> 
+        <property name="usePersonId" type="java.lang.Integer"  column="usePersonId"></property>
+        <property name="purchaseDate" type="java.util.Date" column="purchaseDate"></property> 
+        <property name="supplierID" type="java.lang.Integer"  column="supplierID"></property>
+        <property name="updateDate" type="java.util.Date" column="updateDate"></property>
+        <property name="scrapDate" type="java.util.Date" column="scrapDate"></property>
+        <property name="devicePrice" type="java.lang.Double" column="devicePrice" ></property>
+    	<property name="deviceState"  column="deviceState">
+          <type name="org.hibernate.type.EnumType">
+                <param name="enumClass">com.kaoshidian.oa.util.DeviceStateEnum</param>
+                <param name="type">12</param>
+          </type>  
+       </property> 
+       <property name="attaChment" type="string" column="attaChment"></property>
+       <property name="supervisePerson" type="java.lang.Integer"  column="supervisePerson"></property>
+       <property name="createPerson"   type="java.lang.Integer"  column="createPerson"></property>
+       <property name="createDate"  type="java.util.Date"  column="createDate"></property>
+       <property name="description" type="string"  column="description"></property>
+       <property name="devicePic" type="string"  column="devicePic"></property>  
+    	<property name="scrapPic" type="string"  column="scrapPic"></property>	
+    </class>
+</hibernate-mapping>

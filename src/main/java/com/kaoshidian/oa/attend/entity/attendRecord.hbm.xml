@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.kaoshidian.oa.attend.entity">
+    <class name="AttendRecord"  table="oa_attend_record">
+        <id column="rId" type="java.lang.Integer" name="rId">
+            <generator class="identity"></generator>
+        </id>
+        <property name="rName"    type="string"  column="rName"></property>
+        <property name="rUid"     type="java.lang.Integer"  column="rUid"></property>
+        <property name="rFlag"    type="string"  column="rFlag"></property>
+        <property name="rTime"    type="string"  column="rTime"></property>
+    	<property name="createDate" 	type="java.util.Date"  column="createDate"></property>
+    	<property name="description"    type="string"  column="description"></property>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.kaoshidian.oa.permission.entity">
+    <class name="Org" table="oa_perm_org">
+        <id column="orgId" type="java.lang.Integer" name="orgId">
+            <generator class="identity"></generator>
+        </id>
+        
+        <property name="orgName" type="string" column="orgName"></property>
+        <property name="parentId" type="java.lang.Integer" column="parentId"></property>
+        <property name="dn" type="string" column="dn"></property>             
+    </class>    
+</hibernate-mapping>
